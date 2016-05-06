@@ -1,3 +1,9 @@
 [submodule "src/WordPress"]
 	path = src/WordPress
 	url = https://github.com/WordPress/WordPress.git
+[submodule "src/BasicTheme/wp-content/themes/BasicThemeName/vendor/cuztom"]
+	path = src/BasicTheme/wp-content/themes/BasicThemeName/vendor/cuztom
+	url = https://github.com/gizburdt/cuztom.git
+[submodule "src/BasicTheme/wp-content/themes/BasicThemeName/vendor/TGM-Plugin-Activation"]
+	path = src/BasicTheme/wp-content/themes/BasicThemeName/vendor/TGM-Plugin-Activation
+	url = https://github.com/TGMPA/TGM-Plugin-Activation.git
