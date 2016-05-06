@@ -1,0 +1,29 @@
+{
+  "themeName": "Project Name",
+  "name": "project-name",
+  "version": "Version Number",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@[#REPOSITORY_URL#].git"
+  },
+  "author": "Jaws Digital",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://[#REPOSITORY_URL#]/issues"
+  },
+  "homepage": "https://[#REPOSITORY_URL#]#README",
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-compass": "^1.1.1",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-imagemin": "^1.0.0",
+    "grunt-contrib-uglify": "^1.0.1",
+    "grunt-contrib-watch": "^1.0.0",
+    "load-grunt-tasks": "^3.5.0"
+  }
+}
