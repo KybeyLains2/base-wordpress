@@ -72,6 +72,11 @@
 				'required'	=> true
 			),
 			array(
+				'name'		=> 'iThemes Security (formerly Better WP Security)',
+				'slug'		=> 'better-wp-security',
+				'required'	=> true
+			),
+			array(
 				'name'		=> 'Manual Image Crop',
 				'slug'		=> 'manual-image-crop',
 				'required'	=> false
