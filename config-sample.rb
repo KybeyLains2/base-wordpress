@@ -1,8 +1,8 @@
 http_path = "/"
 sass_dir = "dev/themes/_assets/sass"
-css_dir = "dist/wp-content/themes/project-name/assets/css"
+css_dir = "dist/wp-content/themes/{name}/assets/css"
 images_dir = "dev/themes/_assets/img"
-generated_images_dir = "dist/wp-content/themes/project-name/assets/img"
+generated_images_dir = "dist/wp-content/themes/{name}/assets/img"
 
 # You can select your preferred output style here
 # (can be overridden via the command line):
@@ -14,7 +14,7 @@ generated_images_dir = "dist/wp-content/themes/project-name/assets/img"
 # To enable relative paths to assets via compass helper functions. Uncomment:
 relative_assets = true
 
-# environment = :production
+environment = :production
 output_style = (environment == :production) ? :compressed : :expanded
 
 # To disable debugging comments that display the original

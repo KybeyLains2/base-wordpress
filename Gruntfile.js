@@ -29,13 +29,22 @@ module.exports = function (grunt) {
 					}
 				]
 			},
+			configCompass: {
+				src: 'config-sample.rb',
+				dest: 'config.rb',
+				options: {
+					processContent: function( content, srcpath ) {
+						return content.split('\{name\}').join(grunt.template.process('<%= pkg.name %>'));
+					}
+				}
+			},
 			initialTheme: {
 				files: [
 					{
 						expand: true,
 						cwd: 'src/BasicTheme/wp-content/themes/BasicThemeName/',
 						src: ['**'],
-						dest: 'dev/themes/<%= pkg.name %>'
+						dest: 'dev/themes/'
 					}
 				],
 				options: {
@@ -59,12 +68,12 @@ module.exports = function (grunt) {
 				files: [
 					{
 						expand: true,
-						cwd: 'dev/themes/',
+						cwd: 'dev/',
 						src: [
 							"**",
 							'!**/_assets/**'
 						],
-						dest: 'dist/wp-content/themes/'
+						dest: 'dist/wp-content/themes/<%= pkg.name %>/'
 					}
 				]
 			}
@@ -88,12 +97,7 @@ module.exports = function (grunt) {
 		compass: {
 			build: {
 				options: {
-					config: 'config.rb',
-					sassDir: 'dev/themes/<%= pkg.name %>/_assets/sass',
-					cssDir: 'dist/wp-content/themes/<%= pkg.name %>/assets/css',
-					imagesDir: 'dev/themes/<%= pkg.name %>/_assets/img',
-					// generatedImagesDir: 'dist/wp-content/themes/<%= pkg.name %>/assets/img',
-					sourcemap: true
+					config: 'config.rb'
 				}
 			}
 		}, // compass
@@ -118,19 +122,19 @@ module.exports = function (grunt) {
 				livereload: true
 			},
 			css: {
-				files: [ 'dev/themes/<%= pkg.name %>/_assets/sass/**/*.scss', 'dev/themes/<%= pkg.name %>/_assets/img/icon/*.{png,jpg,gif}' ],
+				files: [ 'dev/themes/_assets/sass/**/*.scss', 'dev/themes/_assets/img/icon/*.{png,jpg,gif}' ],
 				tasks: [ 'compass' ]
 			},
 			img: {
-				files: [ '!dev/themes/<%= pkg.name %>/_assets/img/icon/', 'dev/themes/<%= pkg.name %>/_assets/img/**/*.{png,jpg,gif}' ],
+				files: [ '!dev/themes/_assets/img/icon/', 'dev/themes/_assets/img/**/*.{png,jpg,gif}' ],
 				tasks: [ 'imagemin' ]
 			},
 			js: {
-				files: [ 'dev/themes/<%= pkg.name %>/_assets/js/**/*.js' ],
+				files: [ 'dev/themes/_assets/js/**/*.js' ],
 				tasks: [ 'uglify' ]
 			},
 			textFiles: {
-				files: [ 'dev/themes/<%= pkg.name %>/_assets/js/**/*.{php,html}' ],
+				files: [ 'dev/themes/_assets/js/**/*.{php,html}' ],
 				tasks: [ 'copy:themes' ]
 			}
 		}
@@ -140,7 +144,7 @@ module.exports = function (grunt) {
 	require('load-grunt-tasks')(grunt);
 
 	//Tasks
-	grunt.registerTask( 'start', ['copy:source', 'copy:initialTheme', 'imagemin', 'uglify', 'compass'] );
+	grunt.registerTask( 'start', ['copy:source', 'copy:configCompass', 'copy:initialTheme', 'imagemin', 'uglify', 'compass'] );
 	grunt.registerTask( 'default', ['copy:themes', 'imagemin', 'uglify', 'compass', 'watch'] );
 
 };
