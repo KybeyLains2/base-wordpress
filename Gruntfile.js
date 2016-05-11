@@ -68,7 +68,7 @@ module.exports = function (grunt) {
 				files: [
 					{
 						expand: true,
-						cwd: 'dev/',
+						cwd: 'dev/themes/',
 						src: [
 							"**",
 							'!**/_assets/**'
@@ -84,20 +84,21 @@ module.exports = function (grunt) {
 				options: {
 					sourceMap: true
 				},
-				files: { 'dist/wp-content/themes/<%= pkg.name %>/assets/js/main.js' : [ 'dev/themes/<%= pkg.name %>/_assets/js/*.js' ] }
+				files: { 'dist/wp-content/themes/<%= pkg.name %>/assets/js/main.js' : [ 'dev/themes/_assets/js/*.js' ] }
 			},
 			plugins: {
 				options: {
 					sourceMap: true
 				},
-				files: { 'dist/wp-content/themes/<%= pkg.name %>/assets/js/plugins.js' : [ 'dev/themes/<%= pkg.name %>/_assets/js/plugins/*.js' ] }
+				files: { 'dist/wp-content/themes/<%= pkg.name %>/assets/js/plugins.js' : [ 'dev/themes/_assets/js/plugins/*.js' ] }
 			}
 		},
 
 		compass: {
 			build: {
 				options: {
-					config: 'config.rb'
+					config: 'config.rb',
+					sourceMap: true
 				}
 			}
 		}, // compass
@@ -109,7 +110,7 @@ module.exports = function (grunt) {
 				},
 				files: [{
 					expand: true,
-					cwd: 'dev/themes/<%= pkg.name %>/_assets/img/',
+					cwd: 'dev/themes/_assets/img/',
 					src: ['**/*.{png,jpg,gif}', '!icon/*.{png,jpg,gif}'],
 					dest: 'dist/wp-content/themes/<%= pkg.name %>/assets/img/'
 				}]
@@ -134,7 +135,7 @@ module.exports = function (grunt) {
 				tasks: [ 'uglify' ]
 			},
 			textFiles: {
-				files: [ 'dev/themes/_assets/js/**/*.{php,html}' ],
+				files: [ 'dev/themes/**/*.{php,html,css}' ],
 				tasks: [ 'copy:themes' ]
 			}
 		}
