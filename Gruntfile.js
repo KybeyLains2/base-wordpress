@@ -97,8 +97,7 @@ module.exports = function (grunt) {
 		compass: {
 			build: {
 				options: {
-					config: 'config.rb',
-					sourceMap: true
+					config: 'config.rb'
 				}
 			}
 		}, // compass
