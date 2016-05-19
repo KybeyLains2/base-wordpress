@@ -2,6 +2,7 @@
   "themeName": "Project Name",
   "name": "project-name",
   "version": "1.0.0",
+  "versionWordPress": "4.5.2-pt_BR",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -13,10 +14,6 @@
   },
   "author": "Jaws Digital",
   "license": "ISC",
-  "bugs": {
-    "url": "https://[#REPOSITORY_URL#]/issues"
-  },
-  "homepage": "https://[#REPOSITORY_URL#]#README",
   "devDependencies": {
     "grunt": "^1.0.1",
     "grunt-contrib-compass": "^1.1.1",
@@ -24,6 +21,9 @@
     "grunt-contrib-imagemin": "^1.0.0",
     "grunt-contrib-uglify": "^1.0.1",
     "grunt-contrib-watch": "^1.0.0",
+    "grunt-curl": "^2.2.0",
+    "grunt-push-svn": "^0.2.2",
+    "grunt-zip": "^0.17.1",
     "load-grunt-tasks": "^3.5.0"
   }
 }

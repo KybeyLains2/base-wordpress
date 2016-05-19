@@ -5,7 +5,21 @@ module.exports = function (grunt) {
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
 
+		curl: {
+			WordPress: {
+				dest: "zip/wordpress-latest-pt_BR.zip",
+				src: "https://br.wordpress.org/latest-pt_BR.zip"
+			}
+		},
+
+		unzip: {
+			'src/': 'zip/wordpress-latest-pt_BR.zip'
+		},
+
 		copy: {
+			options : {
+				processContentExclude: ['**/*.{png,gif,jpg,ico,psd}']
+			},
 			source: {
 			    files: [
 					{
@@ -144,7 +158,8 @@ module.exports = function (grunt) {
 	require('load-grunt-tasks')(grunt);
 
 	//Tasks
-	grunt.registerTask( 'start', ['copy:source', 'copy:configCompass', 'copy:initialTheme', 'imagemin', 'uglify', 'compass'] );
+	grunt.registerTask( 'initial', ['curl', 'unzip', 'copy:source', 'copy:configCompass', 'copy:initialTheme'] );
+	grunt.registerTask( 'start', ['initial', 'imagemin', 'uglify', 'compass'] );
 	grunt.registerTask( 'default', ['copy:themes', 'imagemin', 'uglify', 'compass', 'watch'] );
 
 };
