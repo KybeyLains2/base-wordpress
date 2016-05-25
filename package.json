@@ -22,7 +22,6 @@
     "grunt-contrib-uglify": "^1.0.1",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-curl": "^2.2.0",
-    "grunt-push-svn": "^0.2.2",
     "grunt-zip": "^0.17.1",
     "load-grunt-tasks": "^3.5.0"
   }
