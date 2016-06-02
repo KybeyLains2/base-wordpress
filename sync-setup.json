@@ -1,0 +1,16 @@
+{
+	"stage": {
+		"dest": "",
+		"host": "",
+		"port": 21,
+		"user": "",
+		"pwd" : ""
+	},
+	"prod": {
+		"dest": "",
+		"host": "",
+		"port": 21,
+		"user": "",
+		"pwd" : ""
+	}
+}
