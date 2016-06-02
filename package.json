@@ -15,13 +15,15 @@
   "author": "Jaws Digital",
   "license": "ISC",
   "devDependencies": {
-    "grunt": "^1.0.1",
+    "grunt": "^0.4.5",
     "grunt-contrib-compass": "^1.1.1",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-imagemin": "^1.0.0",
+    "grunt-contrib-jshint": "^1.0.0",
     "grunt-contrib-uglify": "^1.0.1",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-curl": "^2.2.0",
+    "grunt-ssh": "^0.12.9",
     "grunt-zip": "^0.17.1",
     "load-grunt-tasks": "^3.5.0"
   }

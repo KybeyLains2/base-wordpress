@@ -4,6 +4,7 @@ module.exports = function (grunt) {
 
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
+		sync: grunt.file.readJSON('sync-setup.json'),
 
 		curl: {
 			WordPress: {
@@ -92,6 +93,48 @@ module.exports = function (grunt) {
 				]
 			}
 		},
+		
+		sftp: {
+			stage: {
+				files: {
+					"./": "dist/**/*"
+				},
+				options: {
+					srcBasePath: "dist/",
+					path: '<%= sync.stage.dest %>',
+					host: '<%= sync.stage.host %>',
+					username: '<%= sync.stage.user %>',
+					password: '<%= sync.stage.pwd %>',
+					showProgress: true,
+					createDirectories: true
+				}
+			},
+			prod: {
+				files: {
+					"./": "dist/**/*"
+				},
+				options: {
+					srcBasePath: "dist/",
+					path: '<%= sync.prod.dest %>',
+					host: '<%= sync.prod.host %>',
+					username: '<%= sync.prod.user %>',
+					password: '<%= sync.prod.pwd %>',
+					showProgress: true,
+					createDirectories: true
+				}
+			}
+		},
+
+		sshexec: {
+			stage: {
+				command: 'ls -la',
+				options: {
+					host: '<%= sync.stage.host %>',
+					username: '<%= sync.stage.user %>',
+					password: '<%= sync.stage.pwd %>',
+				}
+			}
+		},
 
 		uglify: {
 			application: {
@@ -106,6 +149,18 @@ module.exports = function (grunt) {
 				},
 				files: { 'dist/wp-content/themes/<%= pkg.name %>/assets/js/plugins.js' : [ 'dev/themes/_assets/js/plugins/*.js' ] }
 			}
+		},
+
+		// javascript linting with jshint
+		jshint: {
+			options: {
+				jshintrc: '.jshintrc',
+				"force": true
+			},
+			all: [
+				'Gruntfile.js',
+				'dev/themes/_assets/js/**/*.js'
+			]
 		},
 
 		compass: {
@@ -160,6 +215,50 @@ module.exports = function (grunt) {
 	//Tasks
 	grunt.registerTask( 'initial', ['curl', 'unzip', 'copy:source', 'copy:configCompass', 'copy:initialTheme'] );
 	grunt.registerTask( 'start', ['initial', 'imagemin', 'uglify', 'compass'] );
-	grunt.registerTask( 'default', ['copy:themes', 'imagemin', 'uglify', 'compass', 'watch'] );
+	
+	grunt.registerTask( 'basic', ['copy:themes', 'imagemin', 'uglify', 'compass'] );
+	grunt.registerTask( 'default', [ 'basic', 'watch'] );
+
+	grunt.registerTask('stage', function() {
+		grunt.config( 'watch.css.tasks', [ 'compass', 'sftp:stage' ] );
+		grunt.config( 'watch.img.tasks', [ 'imagemin', 'sftp:stage' ] );
+		grunt.config( 'watch.js.tasks', [ 'uglify', 'sftp:stage' ] );
+		grunt.config( 'watch.textFiles.tasks', [ 'copy:themes', 'sftp:stage' ] );
+
+		grunt.task.run('watch');
+	});
+
+	grunt.registerTask('prod', function() {
+		grunt.config( 'watch.css.tasks', [ 'compass', 'sftp:prod' ] );
+		grunt.config( 'watch.img.tasks', [ 'imagemin', 'sftp:prod' ] );
+		grunt.config( 'watch.js.tasks', [ 'uglify', 'sftp:prod' ] );
+		grunt.config( 'watch.textFiles.tasks', [ 'copy:themes', 'sftp:prod' ] );
+
+		grunt.task.run('watch');
+	});
+
+	grunt.event.on('watch', function(action, filepath, target) {
+		var path = require('path'),
+			pkg = grunt.file.readJSON('package.json');
+
+		grunt.log.writeln(target + ': ' + filepath + ' might have ' + action);
+
+		switch ( target ){
+			case 'css':
+			case 'js':
+				var siteDirectory = 'dist/wp-content/themes/' + pkg.name + '/assets/' + target + '/**/*';
+				break;
+			case 'textFiles':
+			case 'img':
+				var siteDirectory = filepath;
+				break;
+		}
+		siteDirectory = siteDirectory.split('\\').join('/');
+		siteDirectory = siteDirectory.replace( 'dev/themes', 'dist/wp-content/themes/' + pkg.name ).replace( '_assets', 'assets' );
+
+		var option = 'sftp.stage.files';
+		grunt.log.writeln(option + ' changed to ' + siteDirectory );
+		grunt.config( option, { './' : siteDirectory } );
+	});
 
 };
