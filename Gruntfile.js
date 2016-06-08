@@ -195,7 +195,7 @@ module.exports = function (grunt) {
 				tasks: [ 'compass' ]
 			},
 			img: {
-				files: [ '!dev/themes/_assets/img/icon/', 'dev/themes/_assets/img/**/*.{png,jpg,gif}' ],
+				files: [ 'dev/themes/_assets/img/**/*.{png,jpg,gif}','!dev/themes/_assets/img/icon/**/*.{png,jpg,gif}' ],
 				tasks: [ 'imagemin' ]
 			},
 			js: {
@@ -244,19 +244,25 @@ module.exports = function (grunt) {
 		grunt.log.writeln(target + ': ' + filepath + ' might have ' + action);
 
 		switch ( target ){
-			case 'css':
 			case 'js':
 				var siteDirectory = 'dist/wp-content/themes/' + pkg.name + '/assets/' + target + '/**/*';
+				siteDirectory = siteDirectory.split('\\').join('/');
+			case 'css':
+				var siteDirectory = [
+					'dist/wp-content/themes/' + pkg.name + '/assets/' + target + '/**/*',
+					'dist/wp-content/themes/' + pkg.name + '/assets/img/icon.png'
+				];
 				break;
 			case 'textFiles':
 			case 'img':
-				var siteDirectory = filepath;
+				var siteDirectory = filepath.split('\\').join('/').replace( 'dev/themes', 'dist/wp-content/themes/' + pkg.name ).replace( '_assets', 'assets' );
 				break;
 		}
-		siteDirectory = siteDirectory.split('\\').join('/');
-		siteDirectory = siteDirectory.replace( 'dev/themes', 'dist/wp-content/themes/' + pkg.name ).replace( '_assets', 'assets' );
 
 		var option = 'sftp.stage.files';
+		grunt.log.writeln(option + ' changed to ' + siteDirectory );
+		grunt.config( option, { './' : siteDirectory } );
+		option = 'sftp.prod.files';
 		grunt.log.writeln(option + ' changed to ' + siteDirectory );
 		grunt.config( option, { './' : siteDirectory } );
 	});
