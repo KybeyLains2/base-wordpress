@@ -23,7 +23,9 @@
     "grunt-contrib-uglify": "^1.0.1",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-curl": "^2.2.0",
+    "grunt-image-resize": "^1.0.0",
     "grunt-ssh": "^0.12.9",
+    "grunt-webshot": "^0.3.0",
     "grunt-zip": "^0.17.1",
     "load-grunt-tasks": "^3.5.0"
   }

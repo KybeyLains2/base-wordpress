@@ -22,7 +22,7 @@ module.exports = function (grunt) {
 				processContentExclude: ['**/*.{png,gif,jpg,ico,psd}']
 			},
 			source: {
-			    files: [
+				files: [
 					{
 						expand: true,
 						cwd: 'src/',
@@ -97,7 +97,7 @@ module.exports = function (grunt) {
 		sftp: {
 			stage: {
 				files: {
-					"./": "dist/**/*"
+					"./": ["dist/**/*", "!dist/wp-config.php", "!dist/**/wp-config.php"]
 				},
 				options: {
 					srcBasePath: "dist/",
@@ -111,7 +111,7 @@ module.exports = function (grunt) {
 			},
 			prod: {
 				files: {
-					"./": "dist/**/*"
+					"./": ["dist/**/*", "!dist/wp-config.php", "!dist/**/wp-config.php"]
 				},
 				options: {
 					srcBasePath: "dist/",
@@ -184,6 +184,42 @@ module.exports = function (grunt) {
 				}]
 			} // build
 		}, // imagemin
+ 
+		webshot: {
+			homepage: {
+				options: {
+					siteType: 'url',
+					site: 'http://www.mecalor.com.br',
+					savePath: 'src/screenshot.jpg',
+					windowSize: {
+						width: 1920,
+						height: 1080
+					},
+					errorIfStatusIsNot200: true
+				}
+			}
+		},
+
+		// image_resize: {
+		// 	no_overwrite: {
+		// 		options: {
+		// 			width: 600,
+		// 			overwrite: false
+		// 		},
+		// 		files: {
+		// 			'src/screenshot1.jpg': 'src/screenshot.jpg'
+		// 		}
+		// 	}
+		// },
+		image_resize: {
+			resize: {
+				options: {
+					width: 100,
+				},
+				src: 'src/*.jpg',
+				dest: 'src/screenshot/'
+			}
+		},
 
 		watch: {
 			options: {
