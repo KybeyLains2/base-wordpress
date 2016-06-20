@@ -4,3 +4,6 @@
 [submodule "src/BasicTheme/wp-content/themes/BasicThemeName/vendor/TGM-Plugin-Activation"]
 	path = src/BasicTheme/wp-content/themes/BasicThemeName/vendor/TGM-Plugin-Activation
 	url = https://github.com/TGMPA/TGM-Plugin-Activation.git
+[submodule "src/BasicTheme/wp-content/themes/BasicThemeName/vendor/schema-breadcrumbs"]
+	path = src/BasicTheme/wp-content/themes/BasicThemeName/vendor/schema-breadcrumbs
+	url = https://github.com/felixarntz/schema-breadcrumbs-for-wordpress-seo.git

@@ -32,6 +32,15 @@
 	/*=================================================================*/
 	/*                         Jaws Overwrite                          */
 	/*=================================================================*/
+	include 'vendor/schema-breadcrumbs/class.schema_breadcrumbs.php';
+	function fix_yoast_breadcrumb(){
+		// only instantiate the class if Yoast breadcrumbs are used
+		if( function_exists( 'yoast_breadcrumb' ) ) {
+			Schema_Breadcrumbs::instance();
+		}
+	}
+	add_action( 'after_setup_theme', 'fix_yoast_breadcrumb' );
+
 	/**
 	 * Include the TGM_Plugin_Activation class.
 	 */
