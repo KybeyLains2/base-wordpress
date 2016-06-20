@@ -64,17 +64,14 @@ module.exports = function (grunt) {
 				],
 				options: {
 					processContent: function (content, srcpath) {
-						var style_file = srcpath.search('BasicThemeName/style.css');
+						content = content.split('\{theme-name\}').join(grunt.template.process('<%= pkg.themeName %>'));
+						content = content.split('\{name\}').join(grunt.template.process('<%= pkg.name %>'));
+						content = content.split('\{description\}').join(grunt.template.process('<%= pkg.description %>'));
+						content = content.split('\{version\}').join(grunt.template.process('<%= pkg.version %>'));
+						content = content.split('\{repository\}').join(grunt.template.process('<%= pkg.repository.url %>'));
+						content = content.split('\{author\}').join(grunt.template.process('<%= pkg.author %>'));
+						content = content.split('\{author-uri\}').join(grunt.template.process('<%= pkg.authorUrl %>'));
 
-						if ( style_file != -1 ) {
-							content = content.replace('\{theme-name\}', grunt.template.process('<%= pkg.themeName %>'));
-							content = content.replace('\{name\}', grunt.template.process('<%= pkg.name %>'));
-							content = content.replace('\{description\}', grunt.template.process('<%= pkg.description %>'));
-							content = content.replace('\{version\}', grunt.template.process('<%= pkg.version %>'));
-							content = content.replace('\{repository\}', grunt.template.process('<%= pkg.repository.url %>'));
-							content = content.replace('\{author\}', grunt.template.process('<%= pkg.author %>'));
-							content = content.replace('\{author-uri\}', grunt.template.process('<%= pkg.authorUrl %>'));
-						}
 						return content;
 					}
 				}
@@ -249,7 +246,7 @@ module.exports = function (grunt) {
 	require('load-grunt-tasks')(grunt);
 
 	//Tasks
-	grunt.registerTask( 'initial', ['curl', 'unzip', 'copy:source', 'copy:configCompass', 'copy:initialTheme'] );
+	grunt.registerTask( 'initial', ['curl', 'unzip', 'copy:initialTheme', 'copy:source', 'copy:configCompass', 'copy:themes'] );
 	grunt.registerTask( 'start', ['initial', 'imagemin', 'uglify', 'compass'] );
 	
 	grunt.registerTask( 'basic', ['copy:themes', 'imagemin', 'uglify', 'compass'] );
