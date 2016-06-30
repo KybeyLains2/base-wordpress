@@ -32,6 +32,8 @@
 	/*=================================================================*/
 	/*                         Jaws Overwrite                          */
 	/*=================================================================*/
+	include 'vendor/jaws/pagination.php';
+	
 	include 'vendor/schema-breadcrumbs/class.schema_breadcrumbs.php';
 	function fix_yoast_breadcrumb(){
 		// only instantiate the class if Yoast breadcrumbs are used
@@ -90,6 +92,11 @@
 				'slug'		=> 'manual-image-crop',
 				'required'	=> false
 			),
+			array(
+				'name'		=> 'Theme Preview',
+				'slug'		=> 'theme-preview',
+				'required'	=> false
+			)
 		);
 
 		/*
