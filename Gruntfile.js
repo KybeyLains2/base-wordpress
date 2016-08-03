@@ -90,6 +90,28 @@ module.exports = function (grunt) {
 				]
 			}
 		},
+
+		sync: {
+			themes: {
+				files: [
+					// {src: ['path/**'], dest: 'dest/'}, // includes files in path and its subdirs 
+					{
+						cwd: 'dev/themes/',
+						src: [
+							"**",
+							'!**/_assets/**'
+						],
+						dest: 'dist/wp-content/themes/<%= pkg.name %>/'
+					}, // makes all src relative to cwd 
+				],
+				verbose: true, // Default: false
+				// pretend: true, // Don't do any disk operations - just write log. Default: false 
+				failOnError: true, // Fail the task when copying is not possible. Default: false 
+				// ignoreInDest: "**/*.js", // Never remove js files from destination. Default: none 
+				updateAndDelete: true, // Remove all files from dest that are not found in src. Default: false 
+				compareUsing: "md5" // compares via md5 hash of file contents, instead of file modification time. Default: "mtime" 
+			}
+		},
 		
 		sftp: {
 			stage: {
@@ -138,13 +160,13 @@ module.exports = function (grunt) {
 				options: {
 					sourceMap: true
 				},
-				files: { 'dist/wp-content/themes/<%= pkg.name %>/assets/js/main.js' : [ 'dev/themes/_assets/js/*.js' ] }
+				files: { 'dev/themes/assets/js/main.js' : [ 'dev/themes/_assets/js/*.js' ] }
 			},
 			plugins: {
 				options: {
 					sourceMap: true
 				},
-				files: { 'dist/wp-content/themes/<%= pkg.name %>/assets/js/plugins.js' : [ 'dev/themes/_assets/js/plugins/*.js' ] }
+				files: { 'dev/themes/assets/js/plugins.js' : [ 'dev/themes/_assets/js/plugins/*.js' ] }
 			}
 		},
 
@@ -177,7 +199,7 @@ module.exports = function (grunt) {
 					expand: true,
 					cwd: 'dev/themes/_assets/img/',
 					src: ['**/*.{png,jpg,gif}', '!icon/*.{png,jpg,gif}'],
-					dest: 'dist/wp-content/themes/<%= pkg.name %>/assets/img/'
+					dest: 'dev/themes/assets/img/'
 				}]
 			} // build
 		}, // imagemin
@@ -236,8 +258,8 @@ module.exports = function (grunt) {
 				tasks: [ 'uglify' ]
 			},
 			textFiles: {
-				files: [ 'dev/themes/**/*.{php,html,css}' ],
-				tasks: [ 'copy:themes' ]
+				files: [ 'dev/themes/**/*','!dev/themes/_assets/**/*' ],
+				tasks: [ 'sync:themes' ]
 			}
 		}
 	});
@@ -246,17 +268,17 @@ module.exports = function (grunt) {
 	require('load-grunt-tasks')(grunt);
 
 	//Tasks
-	grunt.registerTask( 'initial', ['curl', 'unzip', 'copy:initialTheme', 'copy:source', 'copy:configCompass', 'copy:themes'] );
+	grunt.registerTask( 'initial', ['curl', 'unzip', 'copy:initialTheme', 'copy:source', 'copy:configCompass', 'sync:themes'] );
 	grunt.registerTask( 'start', ['initial', 'imagemin', 'uglify', 'compass'] );
 	
-	grunt.registerTask( 'basic', ['copy:themes', 'imagemin', 'uglify', 'compass'] );
+	grunt.registerTask( 'basic', ['imagemin', 'uglify', 'compass', 'sync:themes'] );
 	grunt.registerTask( 'default', [ 'basic', 'watch'] );
 
 	grunt.registerTask('stage', function() {
 		grunt.config( 'watch.css.tasks', [ 'compass', 'sftp:stage' ] );
 		grunt.config( 'watch.img.tasks', [ 'imagemin', 'sftp:stage' ] );
 		grunt.config( 'watch.js.tasks', [ 'uglify', 'sftp:stage' ] );
-		grunt.config( 'watch.textFiles.tasks', [ 'copy:themes', 'sftp:stage' ] );
+		grunt.config( 'watch.textFiles.tasks', [ 'sync:themes', 'sftp:stage' ] );
 
 		grunt.task.run('watch');
 	});
@@ -265,7 +287,7 @@ module.exports = function (grunt) {
 		grunt.config( 'watch.css.tasks', [ 'compass', 'sftp:prod' ] );
 		grunt.config( 'watch.img.tasks', [ 'imagemin', 'sftp:prod' ] );
 		grunt.config( 'watch.js.tasks', [ 'uglify', 'sftp:prod' ] );
-		grunt.config( 'watch.textFiles.tasks', [ 'copy:themes', 'sftp:prod' ] );
+		grunt.config( 'watch.textFiles.tasks', [ 'sync:themes', 'sftp:prod' ] );
 
 		grunt.task.run('watch');
 	});

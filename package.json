@@ -28,5 +28,8 @@
     "grunt-webshot": "^0.3.0",
     "grunt-zip": "^0.17.1",
     "load-grunt-tasks": "^3.5.0"
+  },
+  "dependencies": {
+    "grunt-sync": "^0.5.2"
   }
 }

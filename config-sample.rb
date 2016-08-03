@@ -1,8 +1,8 @@
 http_path = "/"
 sass_dir = "dev/themes/_assets/sass"
-css_dir = "dist/wp-content/themes/{name}/assets/css"
+css_dir = "dev/themes/assets/css"
 images_dir = "dev/themes/_assets/img"
-generated_images_dir = "dist/wp-content/themes/{name}/assets/img"
+generated_images_dir = "dev/themes/assets/img"
 
 # You can select your preferred output style here
 # (can be overridden via the command line):
@@ -16,7 +16,7 @@ relative_assets = true
 
 environment = :production
 output_style = (environment == :production) ? :compressed : :expanded
-sourcemap = (environment == :production) ? false : true
+sourcemap = true
 
 # To disable debugging comments that display the original
 # location of your selectors. Uncomment:
