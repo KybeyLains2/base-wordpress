@@ -94,7 +94,6 @@ module.exports = function (grunt) {
 		sync: {
 			themes: {
 				files: [
-					// {src: ['path/**'], dest: 'dest/'}, // includes files in path and its subdirs 
 					{
 						cwd: 'dev/themes/',
 						src: [
