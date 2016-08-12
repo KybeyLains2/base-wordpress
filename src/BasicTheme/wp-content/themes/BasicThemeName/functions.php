@@ -88,8 +88,8 @@
 				'required'	=> true
 			),
 			array(
-				'name'		=> 'iThemes Security (formerly Better WP Security)',
-				'slug'		=> 'better-wp-security',
+				'name'		=> 'Wordfence Security',
+				'slug'		=> 'wordfence',
 				'required'	=> true
 			),
 			array(
