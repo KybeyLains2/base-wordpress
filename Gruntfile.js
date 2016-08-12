@@ -30,7 +30,6 @@ module.exports = function (grunt) {
 							"**",
 							"!*.git",
 							"!**/themes/twenty**/**",
-							"!**/plugins/**/**",
 							'!**/_assets/**'
 						],
 						dest: 'dist/',
