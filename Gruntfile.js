@@ -4,7 +4,7 @@ module.exports = function (grunt) {
 
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
-		sync: grunt.file.readJSON('sync-setup.json'),
+		sync_data: grunt.file.readJSON('sync-setup.json'),
 
 		curl: {
 			WordPress: {
@@ -30,7 +30,6 @@ module.exports = function (grunt) {
 							"**",
 							"!*.git",
 							"!**/themes/twenty**/**",
-							"!**/plugins/**/**",
 							'!**/_assets/**'
 						],
 						dest: 'dist/',
@@ -97,7 +96,8 @@ module.exports = function (grunt) {
 					{
 						cwd: 'dev/themes/',
 						src: [
-							"**",
+							"**/*",
+							'**/assets/**',
 							'!**/_assets/**'
 						],
 						dest: 'dist/wp-content/themes/<%= pkg.name %>/'
@@ -119,10 +119,11 @@ module.exports = function (grunt) {
 				},
 				options: {
 					srcBasePath: "dist/",
-					path: '<%= sync.stage.dest %>',
-					host: '<%= sync.stage.host %>',
-					username: '<%= sync.stage.user %>',
-					password: '<%= sync.stage.pwd %>',
+					path: '<%= sync_data.stage.dest %>',
+					host: '<%= sync_data.stage.host %>',
+					username: '<%= sync_data.stage.user %>',
+					password: '<%= sync_data.stage.pwd %>',
+					port: '<%= sync_data.stage.port %>',
 					showProgress: true,
 					createDirectories: true
 				}
@@ -133,10 +134,11 @@ module.exports = function (grunt) {
 				},
 				options: {
 					srcBasePath: "dist/",
-					path: '<%= sync.prod.dest %>',
-					host: '<%= sync.prod.host %>',
-					username: '<%= sync.prod.user %>',
-					password: '<%= sync.prod.pwd %>',
+					path: '<%= sync_data.prod.dest %>',
+					host: '<%= sync_data.prod.host %>',
+					username: '<%= sync_data.prod.user %>',
+					password: '<%= sync_data.prod.pwd %>',
+					port: '<%= sync_data.prod.port %>',
 					showProgress: true,
 					createDirectories: true
 				}
@@ -147,9 +149,9 @@ module.exports = function (grunt) {
 			stage: {
 				command: 'ls -la',
 				options: {
-					host: '<%= sync.stage.host %>',
-					username: '<%= sync.stage.user %>',
-					password: '<%= sync.stage.pwd %>',
+					host: '<%= sync_data.stage.host %>',
+					username: '<%= sync_data.stage.user %>',
+					password: '<%= sync_data.stage.pwd %>',
 				}
 			}
 		},
@@ -246,15 +248,15 @@ module.exports = function (grunt) {
 			},
 			css: {
 				files: [ 'dev/themes/_assets/sass/**/*.scss', 'dev/themes/_assets/img/icon/*.{png,jpg,gif}' ],
-				tasks: [ 'compass' ]
+				tasks: [ 'compass', 'sync:themes' ]
 			},
 			img: {
-				files: [ 'dev/themes/_assets/img/**/*.{png,jpg,gif}','!dev/themes/_assets/img/icon/**/*.{png,jpg,gif}' ],
-				tasks: [ 'imagemin' ]
+				files: [ 'dev/themes/_assets/img/**/*.{png,jpg,gif}','!dev/themes/assets/img/**/*.*','!dev/themes/_assets/img/icon/**/*.{png,jpg,gif}' ],
+				tasks: [ 'imagemin', 'sync:themes' ]
 			},
 			js: {
 				files: [ 'dev/themes/_assets/js/**/*.js' ],
-				tasks: [ 'uglify' ]
+				tasks: [ 'uglify', 'sync:themes' ]
 			},
 			textFiles: {
 				files: [ 'dev/themes/**/*','!dev/themes/_assets/**/*' ],
@@ -274,20 +276,22 @@ module.exports = function (grunt) {
 	grunt.registerTask( 'default', [ 'basic', 'watch'] );
 
 	grunt.registerTask('stage', function() {
-		grunt.config( 'watch.css.tasks', [ 'compass', 'sftp:stage' ] );
-		grunt.config( 'watch.img.tasks', [ 'imagemin', 'sftp:stage' ] );
-		grunt.config( 'watch.js.tasks', [ 'uglify', 'sftp:stage' ] );
+		grunt.config( 'watch.css.tasks', [ 'compass', 'sync:themes', 'sftp:stage' ] );
+		grunt.config( 'watch.img.tasks', [ 'imagemin', 'sync:themes', 'sftp:stage' ] );
+		grunt.config( 'watch.js.tasks', [ 'uglify', 'sync:themes', 'sftp:stage' ] );
 		grunt.config( 'watch.textFiles.tasks', [ 'sync:themes', 'sftp:stage' ] );
 
+		grunt.task.run('basic');
 		grunt.task.run('watch');
 	});
 
 	grunt.registerTask('prod', function() {
-		grunt.config( 'watch.css.tasks', [ 'compass', 'sftp:prod' ] );
-		grunt.config( 'watch.img.tasks', [ 'imagemin', 'sftp:prod' ] );
-		grunt.config( 'watch.js.tasks', [ 'uglify', 'sftp:prod' ] );
+		grunt.config( 'watch.css.tasks', [ 'compass', 'sync:themes', 'sftp:prod' ] );
+		grunt.config( 'watch.img.tasks', [ 'imagemin', 'sync:themes', 'sftp:prod' ] );
+		grunt.config( 'watch.js.tasks', [ 'uglify', 'sync:themes', 'sftp:prod' ] );
 		grunt.config( 'watch.textFiles.tasks', [ 'sync:themes', 'sftp:prod' ] );
 
+		grunt.task.run('basic');
 		grunt.task.run('watch');
 	});
 
@@ -295,12 +299,16 @@ module.exports = function (grunt) {
 		var path = require('path'),
 			pkg = grunt.file.readJSON('package.json');
 
-		grunt.log.writeln(target + ': ' + filepath + ' might have ' + action);
+		// grunt.log.writeln(target + ': ' + filepath + ' might have ' + action);
 
 		switch ( target ){
+			case 'img':
+				var siteDirectory = filepath.split('\\').join('/').replace( 'dev/themes', 'dist/wp-content/themes/' + pkg.name ).replace( '_assets', 'assets' );
+				break;
 			case 'js':
 				var siteDirectory = 'dist/wp-content/themes/' + pkg.name + '/assets/' + target + '/**/*';
 				siteDirectory = siteDirectory.split('\\').join('/');
+				break;
 			case 'css':
 				var siteDirectory = [
 					'dist/wp-content/themes/' + pkg.name + '/assets/' + target + '/**/*',
@@ -308,17 +316,25 @@ module.exports = function (grunt) {
 				];
 				break;
 			case 'textFiles':
-			case 'img':
+				if ( filepath.split('img').length > 1 ) { return }
+
 				var siteDirectory = filepath.split('\\').join('/').replace( 'dev/themes', 'dist/wp-content/themes/' + pkg.name ).replace( '_assets', 'assets' );
 				break;
 		}
 
 		var option = 'sftp.stage.files';
-		grunt.log.writeln(option + ' changed to ' + siteDirectory );
+		// grunt.log.writeln(option + ' changed to ' + siteDirectory );
 		grunt.config( option, { './' : siteDirectory } );
 		option = 'sftp.prod.files';
-		grunt.log.writeln(option + ' changed to ' + siteDirectory );
+		// grunt.log.writeln(option + ' changed to ' + siteDirectory );
 		grunt.config( option, { './' : siteDirectory } );
+	});
+
+	grunt.event.on('sync', function(action, filepath, target) {
+		var path = require('path'),
+			pkg = grunt.file.readJSON('package.json');
+
+		grunt.log.writeln('WoW: ' + target + ': ' + filepath + ' might have ' + action);
 	});
 
 };
