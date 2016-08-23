@@ -4,7 +4,7 @@ module.exports = function (grunt) {
 
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
-		sync_data: grunt.file.readJSON('sync-setup.json'),
+		sync: grunt.file.readJSON('sync-setup.json'),
 
 		curl: {
 			WordPress: {
@@ -118,11 +118,10 @@ module.exports = function (grunt) {
 				},
 				options: {
 					srcBasePath: "dist/",
-					path: '<%= sync_data.stage.dest %>',
-					host: '<%= sync_data.stage.host %>',
-					port: '<%= sync_data.stage.port %>',
-					username: '<%= sync_data.stage.user %>',
-					password: '<%= sync_data.stage.pwd %>',
+					path: '<%= sync.stage.dest %>',
+					host: '<%= sync.stage.host %>',
+					username: '<%= sync.stage.user %>',
+					password: '<%= sync.stage.pwd %>',
 					showProgress: true,
 					createDirectories: true
 				}
@@ -133,11 +132,10 @@ module.exports = function (grunt) {
 				},
 				options: {
 					srcBasePath: "dist/",
-					path: '<%= sync_data.prod.dest %>',
-					host: '<%= sync_data.prod.host %>',
-					port: '<%= sync_data.prod.port %>',
-					username: '<%= sync_data.prod.user %>',
-					password: '<%= sync_data.prod.pwd %>',
+					path: '<%= sync.prod.dest %>',
+					host: '<%= sync.prod.host %>',
+					username: '<%= sync.prod.user %>',
+					password: '<%= sync.prod.pwd %>',
 					showProgress: true,
 					createDirectories: true
 				}
@@ -148,9 +146,9 @@ module.exports = function (grunt) {
 			stage: {
 				command: 'ls -la',
 				options: {
-					host: '<%= sync_data.stage.host %>',
-					username: '<%= sync_data.stage.user %>',
-					password: '<%= sync_data.stage.pwd %>',
+					host: '<%= sync.stage.host %>',
+					username: '<%= sync.stage.user %>',
+					password: '<%= sync.stage.pwd %>',
 				}
 			}
 		},
