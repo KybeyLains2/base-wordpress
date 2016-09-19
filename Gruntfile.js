@@ -259,7 +259,7 @@ module.exports = function (grunt) {
 				tasks: [ 'uglify', 'sync:themes' ]
 			},
 			textFiles: {
-				files: [ 'dev/themes/**/*','!dev/themes/_assets/**/*','!dev/themes/_assets/**/*.{js,png,jpg,gif}' ],
+				files: [ 'dev/themes/**/*','!dev/themes/_assets/**/*' ],
 				tasks: [ 'sync:themes' ]
 			}
 		}
@@ -317,8 +317,6 @@ module.exports = function (grunt) {
 				break;
 			case 'textFiles':
 				if ( filepath.split('img').length > 1 ) { return }
-				if ( filepath.split('css').length > 1 ) { return }
-				if ( filepath.split('js').length > 1 ) { return }
 
 				var siteDirectory = filepath.split('\\').join('/').replace( 'dev/themes', 'dist/wp-content/themes/' + pkg.name ).replace( '_assets', 'assets' );
 				break;
@@ -330,6 +328,13 @@ module.exports = function (grunt) {
 		option = 'sftp.prod.files';
 		// grunt.log.writeln(option + ' changed to ' + siteDirectory );
 		grunt.config( option, { './' : siteDirectory } );
+	});
+
+	grunt.event.on('sync', function(action, filepath, target) {
+		var path = require('path'),
+			pkg = grunt.file.readJSON('package.json');
+
+		grunt.log.writeln('WoW: ' + target + ': ' + filepath + ' might have ' + action);
 	});
 
 };
