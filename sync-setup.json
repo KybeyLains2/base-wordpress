@@ -1,10 +1,10 @@
 {
 	"stage": {
-		"dest": "",
-		"host": "",
+		"dest": "/public_html/clientes/oliva",
+		"host": "ftp.jaws.digital",
 		"port": 21,
-		"user": "",
-		"pwd" : ""
+		"user": "jaws1",
+		"pwd" : "Gr7@fdUj0dR"
 	},
 	"prod": {
 		"dest": "",

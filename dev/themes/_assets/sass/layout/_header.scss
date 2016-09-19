@@ -1,0 +1,113 @@
+/*HEADER CSS'S BEGINNING*/
+header{
+	background-color:$third-color;
+	width: 100%;
+	position: relative;
+}
+
+header a{
+	text-decoration: none;
+	color:$fourth-color;
+	display: inline-block;
+	
+}
+
+header a:hover{
+	color:$first-color;
+	text-decoration: none;
+}
+
+header .fa{
+	font-size: 30px;
+	line-height: 1.4;
+}
+
+.menu{
+	font-family: $first-font;
+	list-style: none;
+	margin: 0;
+	padding: 0 15px 5px 15px;
+	position: absolute;
+   	top: 42px;
+   	left: 0;
+   	display: none;
+   	background-color:$second-color;
+	width: 100%;
+	z-index: 10;
+}
+
+
+
+.menu-icons{
+	display: inline-block;
+	margin-left: 10px;
+}
+
+.menu-item a{
+	line-height: 2.2;
+	width: 100%;
+	height: 100%;
+	font-size: 14px;
+	vertical-align: middle;
+	
+}
+
+.logo{
+	width: 35%;
+	margin-bottom: 10px;
+	
+	&-text{
+		font-size: $text-size-logo;
+		font-family:$first-font;
+		font-weight:$font-weight-regular;
+		color:$white;
+	}
+
+	&-olive-white{
+		margin-top: 10px;
+    	width: 25%;
+
+		&:before{
+
+		}
+	
+		&:after{
+
+		}	
+	}	
+}
+
+.olive-lines{
+	position:relative;
+	margin-top: 10px;
+	margin-bottom: 10px;
+
+	&:before{
+		right: 65%;
+		background-color: $white;
+	    width: 40px;
+	    position: absolute;
+	    display: inline-block;
+	    content: '';
+	    height: 1px;
+	    margin: auto;
+	    top: 0;
+	    bottom:0;
+	}
+
+	&:after{
+		left: 65%;
+		background-color: $white;
+	    width: 40px;
+	    position: absolute;
+	    display: inline-block;
+	    content: '';
+	    height: 1px;
+	    margin: auto;
+	    top: 0;
+	    bottom:0;
+	}
+}
+
+
+/*HEADER CSS'S ENDING*/
