@@ -1,0 +1,35 @@
+/*SLIDER CSS'S BEGINNING*/
+.slider{
+	position: relative;
+
+	&-text{
+		font-family: $second-font;
+		font-size: 35px;
+		font-weight: $font-weight-bolder;
+		color: $first-color;
+	}
+
+	&-subtext{
+		font-family: $third-font;
+		font-weight: $font-weight-regular;
+		font-size: 18px;
+		color: #FFF;
+	}
+
+	&-item{
+		position: absolute;
+		top:10px;
+	}
+
+
+}
+
+.bxslider-item{
+	width: 100%;
+	min-height: 60vh;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
+/*SLIDER CSS'S ENDING*/
