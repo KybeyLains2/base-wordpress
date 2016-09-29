@@ -1,17 +1,17 @@
 {
 	"stage": {
-		"type": "", // [ftp, sftp]
+		"type": "",
 		"dest": "",
 		"host": "",
-		"port": 21, // default ftp [21]; default sftp [22];
+		"port": 21,
 		"user": "",
 		"pwd" : ""
 	},
 	"prod": {
-		"type": "", // [ftp, sftp]
+		"type": "",
 		"dest": "",
 		"host": "",
-		"port": 21, // default ftp [21]; default sftp [22];
+		"port": 21,
 		"user": "",
 		"pwd" : ""
 	}

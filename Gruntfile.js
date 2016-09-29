@@ -43,12 +43,16 @@ module.exports = function (grunt) {
 					}
 				]
 			},
-			configCompass: {
-				src: 'config-sample.rb',
-				dest: 'config.rb',
+			configBackup: {
+				src: '.git/config',
+				dest: '.git/config-bkp'
+			},
+			configRename: {
+				src: '.git/config',
+				dest: '.git/config',
 				options: {
-					processContent: function( content, srcpath ) {
-						return content.split('\{name\}').join(grunt.template.process('<%= pkg.name %>'));
+					process: function( content, srcpath ) {
+						return content.split('url = git@gitlab.com:jawsdigital/wpbase.git').join( 'url = voce_precisa_mudar' );
 					}
 				}
 			},
@@ -62,7 +66,7 @@ module.exports = function (grunt) {
 					}
 				],
 				options: {
-					processContent: function (content, srcpath) {
+					process: function (content, srcpath) {
 						content = content.split('\{theme-name\}').join(grunt.template.process('<%= pkg.themeName %>'));
 						content = content.split('\{name\}').join(grunt.template.process('<%= pkg.name %>'));
 						content = content.split('\{description\}').join(grunt.template.process('<%= pkg.description %>'));
@@ -74,19 +78,6 @@ module.exports = function (grunt) {
 						return content;
 					}
 				}
-			},
-			themes: {
-				files: [
-					{
-						expand: true,
-						cwd: 'dev/themes/',
-						src: [
-							"**",
-							'!**/_assets/**'
-						],
-						dest: 'dist/wp-content/themes/<%= pkg.name %>/'
-					}
-				]
 			}
 		},
 
@@ -269,7 +260,7 @@ module.exports = function (grunt) {
 	require('load-grunt-tasks')(grunt);
 
 	//Tasks
-	grunt.registerTask( 'initial', ['curl', 'unzip', 'copy:initialTheme', 'copy:source', 'copy:configCompass', 'sync:themes'] );
+	grunt.registerTask( 'initial', [ 'copy:configBackup', 'copy:configRename', 'curl', 'unzip', 'copy:initialTheme', 'copy:source', 'sync:themes'] );
 	grunt.registerTask( 'start', ['initial', 'imagemin', 'uglify', 'compass'] );
 	
 	grunt.registerTask( 'basic', ['imagemin', 'uglify', 'compass', 'sync:themes'] );
