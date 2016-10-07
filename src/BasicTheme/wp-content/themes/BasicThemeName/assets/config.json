@@ -388,6 +388,8 @@
     "forms.less",
     "responsive-utilities.less"
   ],
-  "js": [],
+  "js": [
+    "affix.js"
+  ],
   "customizerUrl": "http://getbootstrap.com/customize/?id=034c673978a9ec869f35d92964f2cafb"
 }

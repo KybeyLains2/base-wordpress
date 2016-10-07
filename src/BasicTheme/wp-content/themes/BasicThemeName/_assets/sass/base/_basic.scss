@@ -1,3 +1,7 @@
+#bootstrap-grid-frame-jhbsdovu{
+    z-index: 5;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -5,4 +9,39 @@ body {
     * {
         @include box-sizing(border-box);
     }
+}
+
+input,
+select,
+textarea{
+	outline: none;
+}
+
+table{
+	border-collapse: collapse;
+}
+
+img[height="1"]{
+    float: left;
+}
+
+.aligncenter,
+.size-full{
+    display: block;
+
+    margin: 15px auto;
+}
+
+.fleft{
+    margin: 0 15px 15px 0;
+    padding-left: 0;
+}
+
+.fright{
+    margin: 0 0 15px 15px;
+    padding-right: 0;
+}
+
+.no-padding{
+    padding: 0;
 }

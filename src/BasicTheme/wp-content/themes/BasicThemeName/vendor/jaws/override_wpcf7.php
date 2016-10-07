@@ -39,8 +39,35 @@
 		}
 	}
 
+	function filter_label( $value ){
+		if ( strpos( $value, 'label') !== false ) return str_replace( 'label:', '', $value );
+	}
+
 	function custom_wpcf7_text( $tag ){
-		return '<div class="form-group form-group-text col-xs-12 col-sm-3">' . wpcf7_text_shortcode_handler( $tag ) . '</div>';
+		$label_tag = new WPCF7_Shortcode( $tag );
+
+		$default_class = "form-group form-group-text col-xs-12";
+
+		switch ( $label_tag->type ) {
+			case 'tel':
+				$default_class.= " col-sm-3";
+				break;
+			
+			default:
+				$default_class.= " col-sm-6";
+				break;
+		}
+
+		$result = array_map( 'filter_label', $label_tag->options );
+		$result = array_filter( $result );
+		$result = reset( $result );
+
+		$html = '<div class="' . $default_class . '">';
+		$html.= 	'<label for="' . $label_tag->get_id_option() . '" class="form-label">' . $result . '</label>';
+		$html.= 	wpcf7_text_shortcode_handler( $tag );
+		$html.= '</div>';
+
+		return $html;
 	}
 
 	function custom_wpcf7_textarea( $tag ){
