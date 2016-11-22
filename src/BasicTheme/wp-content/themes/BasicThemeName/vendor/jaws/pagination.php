@@ -1,4 +1,4 @@
-<?php 
+<?php
 	/**
 	 * Paginação
 	 * Código por: http://www.kriesi.at/archives/improve-your-wordpress-navigation-menu-output
@@ -47,4 +47,82 @@
 			echo '</nav>';
 		}
 	}
+
+	function infinite_pagination( $pages = '', $args = null ){
+		global $paged;
+		global $wp_query;
+
+		if ( empty($paged) ) $paged = 1;
+
+
+		if ( $pages == '' ) {
+			$pages = $wp_query->max_num_pages;
+			if ( !$pages ) {
+				$pages = 1;
+			}
+		}
+
+		if ( $paged == 1 )
+			echo '<div class="js-infinite-load"><img src="' . get_template_directory_uri() . '/assets/img/loader_post.gif" alt="" class="center-block" /></div>';
+
+		$params = array(
+			'action'		=> 'get_infinite_posts',
+			'found_posts' 	=> $wp_query->found_posts,
+			'posts_per_page'=> $wp_query->query_vars['posts_per_page'],
+			'offset'		=> $wp_query->query_vars['posts_per_page'] * $paged,
+			'query'			=> $wp_query->query,
+			'paged'			=> $paged,
+			'pages'			=> $pages
+		);
+
+		if ( is_null( $wp_query->query ) && !is_null( $args ) ) {
+			$params = array_merge( $params, $args );
+		}
+
+		if ( $params['pages'] != 1 ) {
+			echo '<a href="' . admin_url( 'admin-ajax.php?' . http_build_query( $params ) ) . '" class="post-pagination-link infinite-pagination-link">Próximo &raquo;</a>';
+		}
+	}
+
+	/*=================================================================*/
+	/*                             Ajax                                */
+	/*=================================================================*/
+	add_action( 'wp_ajax_get_infinite_posts', 'prefix_ajax_get_infinite_posts' );
+	add_action( 'wp_ajax_nopriv_get_infinite_posts', 'prefix_ajax_get_infinite_posts' );
+	function prefix_ajax_get_infinite_posts() {
+		$offset = $_GET['offset'];
+
+		if ( !isset( $_GET['offset'] ) )
+			$offset = $_GET['posts_per_page'] * $_GET['paged'];
+
+		$args = array(
+			'posts_per_page'	=> $_GET['posts_per_page'],
+			'offset'			=> $offset,
+			'suppress_filters'	=> false
+		);
+
+		$args = array_merge( $args, $_GET['query'] );
+
+		$posts = get_posts( $args );
+		$count = 1;
+
+		foreach ($posts as $post) {
+			setup_postdata( $GLOBALS['post'] =& $post );
+			set_query_var( 'post_count', $count );
+			get_template_part( 'templates/content', 'item' );
+			$count++;
+		}
+		set_query_var( 'post_count', 0 );
+
+		wp_reset_postdata();
+
+		if ( $_GET['found_posts'] > ( $_GET['posts_per_page'] + $offset ) ) {
+			$_GET['paged'] = $_GET['paged'] + 1;
+			$_GET['offset'] = $_GET['posts_per_page'] * $_GET['paged'];
+			infinite_pagination( '', $_GET );
+		}
+
+		die();
+	}
+
 ?>
