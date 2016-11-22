@@ -1,0 +1,130 @@
+.shortcode{
+    &-box{
+        padding: 0 5px;
+    }
+    &-posts{
+        padding: 0 5px;
+		
+		margin-top: 30px;
+
+        &:hover .shortcode{
+            &-title{
+                color: $first-color;
+
+                text-decoration: none;
+
+                &:hover{
+                    background-color: $first-color;
+                    color: $second-color;
+                }
+            }
+        }
+
+        &.shortcode-columns-1{
+            margin-left: -5px;
+
+            .row{
+                margin: 0;
+            }
+        }
+
+        &:not(.shortcode-columns-1) .row{
+            margin: 0 -5px;
+        }
+    }
+    &-item{
+		position: relative;
+        display: block;
+
+        color: $text-color-third;
+        border-bottom: 1px solid $border-color-third;
+
+        @include transition(.3s);
+
+        padding: 0 5px;
+
+        font-size: 14px;
+        line-height: 2.24;
+
+        &:hover{
+            background-color: $first-color;
+            color: $second-color;
+
+            text-decoration: none;
+        }
+		&[download]{
+			padding-bottom: 20px;
+
+			font-weight: 700;
+		}
+    }
+	&-download{
+		position: absolute;
+		bottom: 10px;
+		left: 5px;
+
+		font-size: 10px;
+		line-height: 1;
+	}
+    &-title{
+        display: block;
+
+        color: $seventh-color;
+
+        font-family: $font-second;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 3.6;
+        text-decoration: none;
+        text-transform: uppercase;
+
+        width: 100%;
+    }
+    &-subtitle{
+        font-weight: 700;
+    }
+
+	&-dropdown{
+		.fa{
+			margin-left: 10px;
+			margin-right: 5px;
+		}
+		&-content{
+			margin: 0 0 40px;
+			padding: 0;
+		}
+		&-subitem{
+			color: $seventh-color;
+		}
+		&-header{
+			border-bottom: 1px solid $border-color-third;
+			margin-bottom: 15px;
+
+			&,
+			p{
+				font-size: 15px;
+				line-height: 2.14;
+			}
+
+			p{
+				margin: 0 0 15px;
+			}
+
+			h2,
+			h3{
+				color: $seventh-color;
+
+				margin: 0;
+
+				font-size: 18px;
+				line-height: 1.67;
+				text-transform: uppercase;
+			}
+		}
+		&-field,
+		&-value{
+			font-size: 15px;
+			line-height: 2;
+		}
+	}
+}

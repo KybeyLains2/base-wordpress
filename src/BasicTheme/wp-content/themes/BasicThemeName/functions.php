@@ -1,4 +1,4 @@
-<?php 
+<?php
 	/*=================================================================*/
 	/*                       Wordpress Overwrite                       */
 	/*=================================================================*/
@@ -15,11 +15,11 @@
 
 	function theme_name_scripts() {
 		wp_enqueue_style( 'google-fonts', 'https://fonts.googleapis.com/css?family=Roboto+Condensed:400,300,700' );
-		wp_enqueue_style( 'font-awesome', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css' );
-		
+		wp_enqueue_style( 'font-awesome', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css' );
+
 		wp_enqueue_style( 'bootstrap', get_template_directory_uri() . '/assets/css/bootstrap.css', array(), '1.0.0' );
-		wp_enqueue_style( 'main', get_template_directory_uri() . '/assets/css/main.css', array(), '1.0.0' );
 		wp_enqueue_style( 'plugins', get_template_directory_uri() . '/assets/css/plugins.css', array(), '1.0.0' );
+		wp_enqueue_style( 'main', get_template_directory_uri() . '/assets/css/main.css', array(), '1.0.0' );
 
 		wp_enqueue_script( 'plugins', get_template_directory_uri() . '/assets/js/plugins.js', array('jquery'), '1.0.0', true );
 		wp_enqueue_script( 'main', get_template_directory_uri() . '/assets/js/main.js?', array('jquery'), '1.0.0', true );
@@ -38,7 +38,7 @@
 	include 'vendor/jaws/disable_emojis.php';
 	include 'vendor/jaws/pagination.php';
 	// include 'vendor/jaws/override_wpcf7.php';
-	
+
 	include 'vendor/schema-breadcrumbs/class.schema_breadcrumbs.php';
 	function fix_yoast_breadcrumb(){
 		// only instantiate the class if Yoast breadcrumbs are used
