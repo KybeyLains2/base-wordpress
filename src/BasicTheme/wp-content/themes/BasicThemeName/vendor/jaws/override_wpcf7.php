@@ -1,8 +1,8 @@
-<?php 
+<?php
 	add_action( 'init', 'custom_wpcf7_shortcode_text', 10 );
 	function custom_wpcf7_shortcode_text() {
 
-		if ( function_exists( 'wpcf7_remove_shortcode' ) ) {	
+		if ( function_exists( 'wpcf7_remove_shortcode' ) ) {
 			wpcf7_remove_shortcode( 'submit' );
 			wpcf7_add_shortcode( 'submit', 'custom_wpcf_submit' );
 
@@ -35,43 +35,87 @@
 			wpcf7_remove_shortcode( 'file*' );
 			wpcf7_add_shortcode(
 				array( 'file', 'file*' ),
-				'custom_wpcf7_select', true );
+				'custom_wpcf7_file', true );
 		}
 	}
 
-	function filter_label( $value ){
-		if ( strpos( $value, 'label') !== false ) return str_replace( 'label:', '', $value );
-	}
+	function label_tag( $label_tag, $tag, $type = 'text' ){
+		$wpcf7_version = WPCF7_VERSION;
+		$wpcf7_version = floatval( $wpcf7_version );
 
-	function custom_wpcf7_text( $tag ){
-		$label_tag = new WPCF7_Shortcode( $tag );
+		$function = 'wpcf7_' . $type . '_shortcode_handler';
 
-		$default_class = "form-group form-group-text col-xs-12";
+		if ( $wpcf7_version >= 4.6 ) 
+			$function = 'wpcf7_' . $type . '_form_tag_handler';
 
-		switch ( $label_tag->type ) {
-			case 'tel':
-				$default_class.= " col-sm-3";
-				break;
-			
-			default:
-				$default_class.= " col-sm-6";
-				break;
-		}
+		$default_class = "form-group form-group-" . $type . " col-xs-12";
+		$placeholder_index = array_search( 'placeholder', $tag['options'] );
 
-		$result = array_map( 'filter_label', $label_tag->options );
-		$result = array_filter( $result );
-		$result = reset( $result );
+		// Attribute args
+		$tag_options = array_map( function( $v ){
+			$value = '';
+
+			if (
+				stripos( $v, 'class:col' ) === false &&
+				stripos( $v, 'placeholder' ) === false
+			) {
+				$value = $v;
+			}
+			return $value;
+		}, $tag['options'] );
+		// /Attribute args
+
+		$container_class = array_map( function( $v ){
+			$value = '';
+
+			if ( stripos( $v, 'class:col' ) !== false ) {
+				$value = str_replace( 'class:', '', $v );
+			}
+			return $value;
+		}, $tag['options']);
+		$container_class = array_filter( $container_class );
+		$default_class.= ' ' . implode( ' ', $container_class );
+
+		$tag['options'] = array_filter( $tag_options );
+
+		unset( $tag['values'] );
 
 		$html = '<div class="' . $default_class . '">';
-		$html.= 	'<label for="' . $label_tag->get_id_option() . '" class="form-label">' . $result . '</label>';
-		$html.= 	wpcf7_text_shortcode_handler( $tag );
+		$html.= 	$function( $tag );
 		$html.= '</div>';
+
+		if ( $label_tag->labels ) {
+			$label_result = reset( $label_tag->labels );
+
+			$html = '<div class="' . $default_class . '">';
+			$html.= 	'<label for="' . $label_tag->get_id_option() . '" class="form-label">' . $label_result . '</label>';
+			$html.= 	$function( $tag );
+			$html.= '</div>';
+		}
 
 		return $html;
 	}
 
+	function insert_id( $tag ){
+		if ( !preg_grep( '/id:/', $tag['options'] ) ) {
+			$tag_options[] = 'id:' . $tag['name'];
+			$tag['options'] = array_merge( $tag['options'], $tag_options );
+		}
+		return $tag;
+	}
+
+	function custom_wpcf7_text( $tag ){
+		$tag = insert_id( $tag );
+		$label_tag = new WPCF7_Shortcode( $tag );
+
+		return label_tag($label_tag, $tag, 'text');
+	}
+
 	function custom_wpcf7_textarea( $tag ){
-		return '<div class="form-group form-group-textarea col-xs-12 col-sm-6 col-sm-offset-6">' . wpcf7_textarea_shortcode_handler( $tag ) . '</div>';
+		$tag = insert_id( $tag );
+		$label_tag = new WPCF7_Shortcode( $tag );
+
+		return label_tag($label_tag, $tag, 'textarea');
 	}
 
 	function custom_wpcf7_select( $tag ){
@@ -85,12 +129,12 @@
 	function custom_wpcf_submit( $tag ) {
 		$tag = new WPCF7_Shortcode( $tag );
 
-		$class = wpcf7_form_controls_class( $tag->type );
-		$class.= ' col-xs-12 btn btn-default';
+		$class = 'form-group form-group-submit';
+		$class = $tag->get_class_option( $class );
 
 		$atts = array();
 
-		$atts['class'] = $tag->get_class_option( $class );
+		$atts['class'] = wpcf7_form_controls_class( $tag->type );
 		$atts['id'] = $tag->get_id_option();
 		$atts['tabindex'] = $tag->get_option( 'tabindex', 'int', true );
 
@@ -103,8 +147,13 @@
 
 		$atts = wpcf7_format_atts( $atts );
 
-		$html = sprintf( '<button %1$s />%2$s<span class="fake-icon fake-icon-arrow-right"></span></button></div><div class="clearfix">', $atts, $value );
-		
-		return '<div class="clearfix"></div><div class="col-xs-10 col-xs-offset-1 col-sm-3 col-sm-offset-6">' . $html . '</div>';
+		$html = sprintf( '<button %1$s />%2$s</button>', $atts, $value );
+
+		return sprintf( '<div class="%1$s">%2$s</div>', $class, $html );
+	}
+
+	// add_filter( 'wpcf7_ajax_loader', 'filter_wpcf7', 10, 1 );
+	function filter_wpcf7( $url ){
+		return get_template_directory_uri() . '/assets/img/plugins/loader_form.gif';
 	}
 ?>
