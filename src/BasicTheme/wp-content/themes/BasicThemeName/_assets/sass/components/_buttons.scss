@@ -1,0 +1,21 @@
+.btn{
+	&-default{
+		display: block;
+		position: relative;
+
+		border: none;
+
+		@include border-radius(2px);
+
+		padding: 0 70px 0 15px;
+
+		font-family: $font;
+		font-size: 13px;
+		font-weight: 700;
+		line-height: 3.11;
+
+		cursor: pointer;
+
+		@include transition(.3s);
+	}
+}

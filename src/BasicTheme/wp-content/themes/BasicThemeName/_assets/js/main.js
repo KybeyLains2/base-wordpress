@@ -51,4 +51,11 @@
 		}
 	});
 
+	$(".owl-carousel").owlCarousel();
+
+	$('.js-scroll').jscroll({
+		loadingHtml: 	$('.js-infinite-load').html(),
+		nextSelector: 	'.infinite-pagination-link'
+	});
+
 })(jQuery);
