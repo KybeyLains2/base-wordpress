@@ -39,13 +39,13 @@
 				'required'	=> true
 			),
 			array(
-				'name'		=> 'Manual Image Crop',
-				'slug'		=> 'manual-image-crop',
-				'required'	=> false
+				'name'		=> 'SMTP Mailer',
+				'slug'		=> 'smtp-mailer',
+				'required'	=> true
 			),
 			array(
-				'name'		=> 'Theme Preview',
-				'slug'		=> 'theme-preview',
+				'name'		=> 'Manual Image Crop',
+				'slug'		=> 'manual-image-crop',
 				'required'	=> false
 			)
 		);
