@@ -44,6 +44,11 @@
 				'required'	=> true
 			),
 			array(
+				'name'		=> 'Clean Image Filenames',
+				'slug'		=> 'clean-image-filenames',
+				'required'	=> true
+			),
+			array(
 				'name'		=> 'Manual Image Crop',
 				'slug'		=> 'manual-image-crop',
 				'required'	=> false
