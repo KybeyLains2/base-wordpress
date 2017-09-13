@@ -136,6 +136,31 @@ module.exports = function (grunt) {
 			}
 		},
 
+		ftpush: {
+			stage: {
+				auth: {
+					host: '<%= sync_data.stage.host %>',
+					port: '<%= sync_data.stage.port %>',
+					username: '<%= sync_data.stage.user %>',
+					password: '<%= sync_data.stage.pwd %>',
+				},
+				src: ["dist/**/*", "!dist/wp-config.php", "!dist/**/wp-config.php"],
+				dest: "./",
+				exclusions: ['dist/**/.DS_Store', 'dist/**/Thumbs.db', 'dist/tmp']
+			},
+			prod: {
+				auth: {
+					host: '<%= sync_data.prod.host %>',
+					port: '<%= sync_data.prod.port %>',
+					username: '<%= sync_data.prod.user %>',
+					password: '<%= sync_data.prod.pwd %>',
+				},
+				src: ["dist/**/*", "!dist/wp-config.php", "!dist/**/wp-config.php"],
+				dest: '<%= sync_data.prod.dest %>',
+				exclusions: ['dist/**/.DS_Store', 'dist/**/Thumbs.db', 'dist/tmp']
+			}
+		},
+
 		sshexec: {
 			stage: {
 				command: 'ls -la',
@@ -152,7 +177,13 @@ module.exports = function (grunt) {
 				options: {
 					sourceMap: true
 				},
-				files: { 'dev/themes/assets/js/main.js' : [ 'dev/themes/_assets/js/*.js' ] }
+				files: { 'dev/themes/assets/js/main.js' : [ 'dev/themes/_assets/js/main.js' ] }
+			},
+			admin: {
+				options: {
+					sourceMap: true
+				},
+				files: { 'dev/themes/assets/js/admin.js' : [ 'dev/themes/_assets/js/admin.js' ] }
 			},
 			plugins: {
 				options: {
@@ -232,6 +263,47 @@ module.exports = function (grunt) {
 			}
 		},
 
+		notify_hooks: {
+			options: {
+				enabled: true,
+				max_jshint_notifications: 5, // maximum number of notifications from jshint output 
+				title: "<%= pkg.themeName %>", // defaults to the name in package.json, or will use project directory's name 
+				success: true, // whether successful grunt executions should be notified automatically 
+				duration: 5 // the duration of notification in seconds, for `notify-send only 
+			}
+		},
+
+		notify: {
+			options: {
+				title: '<%= pkg.themeName %>'
+			},
+			watch: {
+				options: {
+					message: 'Watch waiting...', //required
+				}
+			},
+			css: {
+				options: {
+					message: 'CSS compilado...'
+				}
+			},
+			img: {
+				options: {
+					message: 'Imagens processadas...'
+				}
+			},
+			js: {
+				options: {
+					message: 'Javascript minificado...'
+				}
+			},
+			textFiles: {
+				options: {
+					message: 'Arquivos sincronizados...'
+				}
+			}
+		},
+
 		watch: {
 			options: {
 				spawn: false,
@@ -239,19 +311,19 @@ module.exports = function (grunt) {
 			},
 			css: {
 				files: [ 'dev/themes/_assets/sass/**/*.scss', 'dev/themes/_assets/img/icon/*.{png,jpg,gif}' ],
-				tasks: [ 'compass', 'sync:themes' ]
+				tasks: [ 'compass', 'sync:themes', 'notify:css' ]
 			},
 			img: {
 				files: [ 'dev/themes/_assets/img/**/*.{png,jpg,gif}','!dev/themes/assets/img/**/*.*','!dev/themes/_assets/img/icon/**/*.{png,jpg,gif}' ],
-				tasks: [ 'imagemin', 'sync:themes' ]
+				tasks: [ 'imagemin', 'sync:themes', 'notify:img' ]
 			},
 			js: {
 				files: [ 'dev/themes/_assets/js/**/*.js' ],
-				tasks: [ 'uglify', 'sync:themes' ]
+				tasks: [ 'uglify', 'sync:themes', 'notify:js' ]
 			},
 			textFiles: {
 				files: [ 'dev/themes/**/*','!dev/themes/_assets/**/*','!dev/themes/_assets/**/*.{js,png,jpg,gif}' ],
-				tasks: [ 'sync:themes' ]
+				tasks: [ 'sync:themes', 'notify:textFiles' ]
 			}
 		}
 	});
@@ -263,64 +335,123 @@ module.exports = function (grunt) {
 	grunt.registerTask( 'initial', [ 'copy:configBackup', 'copy:configRename', 'curl', 'unzip', 'copy:initialTheme', 'copy:source', 'sync:themes'] );
 	grunt.registerTask( 'start', ['initial', 'imagemin', 'uglify', 'compass'] );
 	
-	grunt.registerTask( 'basic', ['imagemin', 'uglify', 'compass', 'sync:themes'] );
+	grunt.registerTask( 'basic', ['uglify', 'compass', 'sync:themes'] );
 	grunt.registerTask( 'default', [ 'basic', 'watch'] );
 
 	grunt.registerTask('stage', function() {
-		grunt.config( 'watch.css.tasks', [ 'compass', 'sync:themes', 'sftp:stage' ] );
-		grunt.config( 'watch.img.tasks', [ 'imagemin', 'sync:themes', 'sftp:stage' ] );
-		grunt.config( 'watch.js.tasks', [ 'uglify', 'sync:themes', 'sftp:stage' ] );
-		grunt.config( 'watch.textFiles.tasks', [ 'sync:themes', 'sftp:stage' ] );
+		var sync_data = grunt.file.readJSON('sync-setup.json');
+		
+		if ( sync_data.stage.type != '' ) {
+			grunt.log.writeln("Connection Type: " + sync_data.stage.type);
+
+			if ( sync_data.stage.type == 'sftp' ) {
+				grunt.config( 'watch.css.tasks', [ 'compass', 'sync:themes', 'sftp:stage', 'notify:css' ] );
+				grunt.config( 'watch.img.tasks', [ 'imagemin', 'sync:themes', 'sftp:stage', 'notify:img' ] );
+				grunt.config( 'watch.js.tasks', [ 'uglify', 'sync:themes', 'sftp:stage', 'notify:js' ] );
+				grunt.config( 'watch.textFiles.tasks', [ 'sync:themes', 'sftp:stage', 'notify:textFiles' ] );
+			}else{
+				grunt.config( 'watch.css.tasks', [ 'compass', 'sync:themes', 'ftpush:stage', 'notify:css' ] );
+				grunt.config( 'watch.img.tasks', [ 'imagemin', 'sync:themes', 'ftpush:stage', 'notify:img' ] );
+				grunt.config( 'watch.js.tasks', [ 'uglify', 'sync:themes', 'ftpush:stage', 'notify:js' ] );
+				grunt.config( 'watch.textFiles.tasks', [ 'sync:themes', 'ftpush:stage', 'notify:textFiles' ] );
+			}
+		}
 
 		grunt.task.run('basic');
+		grunt.task.run('notify:watch');
 		grunt.task.run('watch');
 	});
 
 	grunt.registerTask('prod', function() {
-		grunt.config( 'watch.css.tasks', [ 'compass', 'sync:themes', 'sftp:prod' ] );
-		grunt.config( 'watch.img.tasks', [ 'imagemin', 'sync:themes', 'sftp:prod' ] );
-		grunt.config( 'watch.js.tasks', [ 'uglify', 'sync:themes', 'sftp:prod' ] );
-		grunt.config( 'watch.textFiles.tasks', [ 'sync:themes', 'sftp:prod' ] );
+		var sync_data = grunt.file.readJSON('sync-setup.json');
+
+		if ( sync_data.stage.type != '' ) {
+			grunt.log.writeln("Connection Type: " + sync_data.prod.type);
+
+			if ( sync_data.prod.type == 'sftp' ) {
+				grunt.config( 'watch.css.tasks', [ 'compass', 'sync:themes', 'sftp:prod', 'notify:css' ] );
+				grunt.config( 'watch.img.tasks', [ 'imagemin', 'sync:themes', 'sftp:prod', 'notify:img' ] );
+				grunt.config( 'watch.js.tasks', [ 'uglify', 'sync:themes', 'sftp:prod', 'notify:js' ] );
+			}else{
+				grunt.config( 'watch.css.tasks', [ 'compass', 'sync:themes', 'ftpush:prod', 'notify:css' ] );
+				grunt.config( 'watch.img.tasks', [ 'imagemin', 'sync:themes', 'ftpush:prod', 'notify:img' ] );
+				grunt.config( 'watch.js.tasks', [ 'uglify', 'sync:themes', 'ftpush:prod', 'notify:js' ] );
+			}
+		}
 
 		grunt.task.run('basic');
+		grunt.task.run('notify:watch');
 		grunt.task.run('watch');
 	});
 
+	var cssDirectory = new Set();
 	grunt.event.on('watch', function(action, filepath, target) {
 		var path = require('path'),
-			pkg = grunt.file.readJSON('package.json');
+			pkg = grunt.file.readJSON('package.json'),
+			sync_data = grunt.file.readJSON('sync-setup.json'),
+			siteDirectory = './';
 
-		// grunt.log.writeln(target + ': ' + filepath + ' might have ' + action);
+		// grunt.log.writeln('\n' + target + ': ' + filepath + ' might have ' + action + '\n\n');
 
 		switch ( target ){
 			case 'img':
-				var siteDirectory = filepath.split('\\').join('/').replace( 'dev/themes', 'dist/wp-content/themes/' + pkg.name ).replace( '_assets', 'assets' );
+				siteDirectory = filepath.split('\\').join('/').replace( 'dev/themes', 'dist/wp-content/themes/' + pkg.name ).replace( '_assets', 'assets' );
 				break;
 			case 'js':
-				var siteDirectory = 'dist/wp-content/themes/' + pkg.name + '/assets/' + target + '/**/*';
+				siteDirectory = 'dist/wp-content/themes/' + pkg.name + '/assets/' + target + '/**/*';
 				siteDirectory = siteDirectory.split('\\').join('/');
 				break;
 			case 'css':
-				var siteDirectory = [
+				cssDirectory.clear();
+				siteDirectory = [
 					'dist/wp-content/themes/' + pkg.name + '/assets/' + target + '/**/*',
 					'dist/wp-content/themes/' + pkg.name + '/assets/img/icon.png'
 				];
 				break;
 			case 'textFiles':
-				if ( filepath.split('img').length > 1 ) { return }
-				if ( filepath.split('css').length > 1 ) { return }
-				if ( filepath.split('js').length > 1 ) { return }
+				var normal = true;
+				if ( filepath.split('img').length > 1 ){return}
+				if ( filepath.split('js').length > 1 || filepath.split('css').length > 1 ) { 
+					var file = filepath.split('\\').join('/'),
+						file = file.split('/').slice(0, -1).join('/');
+						file = file.replace( 'dev/themes', 'dist/wp-content/themes/' + pkg.name ).replace( '_assets', 'assets' );
+					if ( cssDirectory.has(file) === false ) {
+						cssDirectory.add(file);
+					}
 
-				var siteDirectory = filepath.split('\\').join('/').replace( 'dev/themes', 'dist/wp-content/themes/' + pkg.name ).replace( '_assets', 'assets' );
+					normal = false;
+					siteDirectory = file;
+				}
+
+				if ( normal ) {
+					siteDirectory = filepath.split('\\').join('/').replace( 'dev/themes', 'dist/wp-content/themes/' + pkg.name ).replace( '_assets', 'assets' );
+				}
 				break;
 		}
 
+		//  SFTP Config
 		var option = 'sftp.stage.files';
 		// grunt.log.writeln(option + ' changed to ' + siteDirectory );
 		grunt.config( option, { './' : siteDirectory } );
 		option = 'sftp.prod.files';
 		// grunt.log.writeln(option + ' changed to ' + siteDirectory );
 		grunt.config( option, { './' : siteDirectory } );
+		// /SFTP Config
+
+		//  FTP Config
+		if ( cssDirectory.size > 0 ) {
+			var dest = Array.from(cssDirectory.values()),
+				dest = dest.toString().replace( 'dist/', sync_data.prod.dest );
+			
+			grunt.log.writeln('Src: ' + siteDirectory );
+			grunt.log.writeln('Dest: ' + dest );
+
+			grunt.config( 'ftpush.stage.src', siteDirectory );
+			grunt.config( 'ftpush.stage.dest', dest );
+
+			grunt.config( 'ftpush.prod.src', siteDirectory );
+			grunt.config( 'ftpush.prod.dest', dest );
+		}
 	});
 
 };
