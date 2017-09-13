@@ -36,6 +36,7 @@
 	/*=================================================================*/
 	// include locate_template( 'vendor/jaws/simple_html_dom.php' );
 	include 'vendor/jaws/disable_emojis.php';
+	include 'vendor/jaws/nav_menu_tree.php';
 	include 'vendor/jaws/pagination.php';
 	// include 'vendor/jaws/override_wpcf7.php';
 
