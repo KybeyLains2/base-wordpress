@@ -52,6 +52,11 @@
 				'name'		=> 'Manual Image Crop',
 				'slug'		=> 'manual-image-crop',
 				'required'	=> false
+			),
+			array(
+				'name'		=> 'WP Migrate DB',
+				'slug'		=> 'wp-migrate-db',
+				'required'	=> false
 			)
 		);
 
