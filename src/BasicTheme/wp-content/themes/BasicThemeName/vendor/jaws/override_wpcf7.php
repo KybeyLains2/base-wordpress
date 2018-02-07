@@ -39,9 +39,50 @@
 		}
 	}
 
+	function tag_options ( $v ){
+		$value = '';
+
+		if (
+			stripos( $v, 'class:col' ) === false &&
+			stripos( $v, 'label:' ) === false &&
+			stripos( $v, 'placeholder' ) === false
+		) {
+			$value = $v;
+		}
+		return $value;
+	}
+
+	function container_class ( $v ){
+		$value = '';
+
+		if ( stripos( $v, 'class:col' ) !== false ) {
+			$value = str_replace( 'class:', '', $v );
+		}
+		return $value;
+	}
+
+	function container_class_submit ( $v ){
+		$value = '';
+
+		if ( stripos( $v, 'col' ) !== false ) {
+			$value = $v;
+		}
+		return $value;
+	}
+
+	function button_class ( $v ){
+		$value = '';
+
+		if ( stripos( $v, 'col' ) === false ) {
+			$value = $v;
+		}
+		return $value;
+	}
+
 	function label_tag( $label_tag, $tag, $type = 'text' ){
 		$wpcf7_version = WPCF7_VERSION;
 		$wpcf7_version = floatval( $wpcf7_version );
+		$label_result = '';
 
 		$function = 'wpcf7_' . $type . '_shortcode_handler';
 
@@ -49,48 +90,53 @@
 			$function = 'wpcf7_' . $type . '_form_tag_handler';
 
 		$default_class = "form-group form-group-" . $type . " col-xs-12";
-		$placeholder_index = array_search( 'placeholder', $tag['options'] );
 
 		// Attribute args
-		$tag_options = array_map( function( $v ){
-			$value = '';
-
-			if (
-				stripos( $v, 'class:col' ) === false &&
-				stripos( $v, 'placeholder' ) === false
-			) {
-				$value = $v;
-			}
-			return $value;
-		}, $tag['options'] );
-		// /Attribute args
-
-		$container_class = array_map( function( $v ){
-			$value = '';
-
-			if ( stripos( $v, 'class:col' ) !== false ) {
-				$value = str_replace( 'class:', '', $v );
-			}
-			return $value;
-		}, $tag['options']);
+		$tag_options = array_map( 'tag_options', $tag['options'] );
+		$container_class = array_map( 'container_class', $tag['options']);
 		$container_class = array_filter( $container_class );
 		$default_class.= ' ' . implode( ' ', $container_class );
+		// /Attribute args
 
 		$tag['options'] = array_filter( $tag_options );
+		// $tag['options'][] = 'class:' . $type . '-' . $label_tag->get_id_option();
 
-		unset( $tag['values'] );
+		if ( $type != 'select' ) 
+			unset( $tag['values'] );
+
 
 		$html = '<div class="' . $default_class . '">';
 		$html.= 	$function( $tag );
 		$html.= '</div>';
 
-		if ( $label_tag->labels ) {
-			$label_result = reset( $label_tag->labels );
+		if ( $label_tag && $label_tag->labels && $type != 'checkbox' ) {
+			if ( $label_result == '' ) {
+				$label_result = reset( $label_tag->labels );
 
-			$html = '<div class="' . $default_class . '">';
-			$html.= 	'<label for="' . $label_tag->get_id_option() . '" class="form-label">' . $label_result . '</label>';
-			$html.= 	$function( $tag );
-			$html.= '</div>';
+				$search = array_search( 'first_is_label', $label_tag->options );
+
+				// if ( $search !== false && $type == 'select' ) {
+				if ( $type == 'select' ) {
+					if ( is_array($tag) ) {
+						unset( $tag['values'][0] );
+						unset( $tag['raw_values'][0] );
+						unset( $tag['labels'][0] );
+					}elseif ( is_object($tag) ){
+						unset( $tag->values[0] );
+						unset( $tag->raw_values[0] );
+						unset( $tag->labels[0] );
+					}
+				}else{
+					$tag['values'] = array();
+				}
+			}
+
+			if ( $label_result ) {
+				$html = '<div class="' . $default_class . '">';
+				$html.= 	'<label for="' . $label_tag->get_id_option() . '" class="form-label">' . $label_result . '</label>';
+				$html.= 	$function( $tag );
+				$html.= '</div>';
+			}
 		}
 
 		return $html;
@@ -98,7 +144,7 @@
 
 	function insert_id( $tag ){
 		if ( !preg_grep( '/id:/', $tag['options'] ) ) {
-			$tag_options[] = 'id:' . $tag['name'];
+			$tag_options[] = 'id:' . $tag['name'] . '_' . rand();
 			$tag['options'] = array_merge( $tag['options'], $tag_options );
 		}
 		return $tag;
@@ -119,11 +165,17 @@
 	}
 
 	function custom_wpcf7_select( $tag ){
-		return '<div class="form-group form-group-select col-xs-12 col-sm-3">' . wpcf7_select_shortcode_handler( $tag ) . '</div>';
+		$tag = insert_id( $tag );
+		$label_tag = new WPCF7_Shortcode( $tag );
+
+		return label_tag($label_tag, $tag, 'select');
 	}
 
 	function custom_wpcf7_file( $tag ){
-		return '<div class="form-group form-group-file col-xs-12 col-sm-3">' . wpcf7_file_shortcode_handler( $tag ) . '</div>';
+		$tag = insert_id( $tag );
+		$label_tag = new WPCF7_Shortcode( $tag );
+
+		return label_tag($label_tag, $tag, 'file');
 	}
 
 	function custom_wpcf_submit( $tag ) {
