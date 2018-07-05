@@ -16,10 +16,10 @@ Editar o arquivo package.json:
 - version: Versão atual do tema do cliente
 
 ```
+git fetch --unshallow origin // Desvincula com o repositório da base
 grunt start
 
 git remote -v // Verifica o repositório remoto atual
-git fetch --unshallow origin // Desvincula com o repositório da base
 git remote set-url origin <git://github.com/example-user/example-repo.git>
 git remote -v // Verifica se repositório remoto foi alterado
 git add .
