@@ -1,0 +1,79 @@
+.post-pagination {
+	margin-top: 30px;
+
+	font-family: $font-second;
+	font-size: 16px;
+	
+	&-title,
+	&-item,
+	&-link {
+		position: relative;
+		display: inline-block;
+
+		padding: 3px 15px;
+
+		font-size: 16px;
+		line-height: 1.2;
+	}
+
+	&-title,
+	&-link {
+		background-color: $first-color;
+
+		color: $second-color;
+	}
+
+	
+	&-link{
+
+		&:before{
+			content:'';
+			position: absolute;
+			top: 0;
+			left: 0;
+
+			@include transition(.3s);
+			@include background-image( linear-gradient( -67deg, transparent 0%, transparent 49%, darken($first-color, 10%) 51%, darken($first-color, 10%) 100% ) );
+
+			height: 100%;
+			width: 0;
+		}
+		&:after{
+			content:'';
+			position: absolute;
+			top: 0;
+			left: 0;
+
+			@include transition(.3s);
+			@include background-image( linear-gradient( -77deg, transparent 0%, transparent 58%, $second-color 64%, $second-color 100% ) );
+
+			height: 100%;
+			width: 0;
+		}
+
+		&:hover {
+			background-color: darken($first-color, 2%);
+			color: $second-color;
+
+			text-decoration: none;
+			
+			&:before{
+				width: 13px;
+			}
+
+			&:after{
+				width: 10px;
+			}
+		}
+	}
+
+	
+	&-item {
+		background-color: darken($first-color, 10%);
+
+		color: $second-color;
+	}
+}
+	
+
+
