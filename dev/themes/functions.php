@@ -34,13 +34,13 @@
 	include 'vendor/cuztom/cuztom.php';
 
 	/*=================================================================*/
-	/*                         Jaws Overwrite                          */
+	/*                         chyse Overwrite                          */
 	/*=================================================================*/
-	// include locate_template( 'vendor/jaws/simple_html_dom.php' );
-	include 'vendor/jaws/disable_emojis.php';
-	include 'vendor/jaws/nav_menu_tree.php';
-	include 'vendor/jaws/pagination.php';
-	// include 'vendor/jaws/override_wpcf7.php';
+	// include locate_template( 'vendor/chyse/simple_html_dom.php' );
+	include 'vendor/chyse/disable_emojis.php';
+	include 'vendor/chyse/nav_menu_tree.php';
+	include 'vendor/chyse/pagination.php';
+	// include 'vendor/chyse/override_wpcf7.php';
 
 	include 'vendor/schema-breadcrumbs/class.schema_breadcrumbs.php';
 	function fix_yoast_breadcrumb(){
@@ -55,5 +55,5 @@
 	 * Include the TGM_Plugin_Activation class.
 	 */
 	require_once dirname( __FILE__ ) . '/vendor/TGM-Plugin-Activation/class-tgm-plugin-activation.php';
-	include 'vendor/jaws/tgm_plugin_activation.php';
+	include 'vendor/chyse/tgm_plugin_activation.php';
 ?>
