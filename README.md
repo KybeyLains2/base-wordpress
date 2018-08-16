@@ -1,7 +1,6 @@
 # Novo Projeto
 
 ```
-git clone --depth 1 git@gitlab.com:jawsdigital/wpbase.git <pasta-projeto>
 cd <pasta-projeto>
 npm install
 ```

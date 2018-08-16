@@ -39,23 +39,23 @@
 		}
 	});
 
-	$('.fixed').affix({
-		offset: {
-			top: function () {
-				return ( this.top = $('.header').offset().top + 10 );
-			},
-			bottom: function () {
-				var limit = $(document).outerHeight(true) - $('.footer').offset().top;
-				return ( this.bottom = limit + 150 )
-			}
-		}
-	});
+	// $('.fixed').affix({
+	// 	offset: {
+	// 		top: function () {
+	// 			return ( this.top = $('.header').offset().top + 10 );
+	// 		},
+	// 		bottom: function () {
+	// 			var limit = $(document).outerHeight(true) - $('.footer').offset().top;
+	// 			return ( this.bottom = limit + 150 )
+	// 		}
+	// 	}
+	// });
 
 	$(".owl-carousel").owlCarousel();
 
-	$('.js-scroll').jscroll({
-		loadingHtml: 	$('.js-infinite-load').html(),
-		nextSelector: 	'.infinite-pagination-link'
-	});
+	// $('.js-scroll').jscroll({
+	// 	loadingHtml: 	$('.js-infinite-load').html(),
+	// 	nextSelector: 	'.infinite-pagination-link'
+	// });
 
 })(jQuery);
